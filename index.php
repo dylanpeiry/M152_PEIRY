@@ -30,14 +30,34 @@ $posts = App::getPosts();
     <p class="welcome_message">Bienvenue utilisateur</p>
 </div>
 <div class="posts">
+    <figure>
+        <p>description photos</p>
+        <img src="uploads/heisenberg.jpg" alt="" class="post_picture">
+        <img src="uploads/heisenberg.jpg" alt="" class="post_picture">
+        <img src="uploads/jessie.jpg" alt="" class="post_picture">
+    </figure>
+    <br>
     <?php
+    $lastId = -1;
+
     foreach ($posts as $post) {
+        $id = $post[3];
+
+        if ($id != $lastId) {
+            ?>
+            <figure id="<?= $id ?>">
+            <p><?= $post[4] ?></p>
+            <?php
+        }
         ?>
-        <figure>
-            <img src="uploads/<?=$post[3]?>" alt="Photo de commentaire" class="post_picture">
-            <figcaption><?=$post[1]?></figcaption>
-        </figure>
+        <img src="uploads/<?= $post[1] ?>" alt="Photo de commentaire" class="post_picture">
         <?php
+        if ($id == $lastId) {
+            ?>
+            </figure><br>
+            <?php
+        }
+        $lastId = $id;
     }
     ?>
 </div>

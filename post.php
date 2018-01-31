@@ -8,7 +8,7 @@
 
 require_once 'php/inc.all.php';
 //Si les variables contiennent les données envoyées du formulaire, on va les traiter et les ajouter dans la BDD
-
+$message;
 if (!empty($_POST) && !empty($_FILES)) {
     var_dump($_POST, $_FILES); //debug
 
@@ -17,20 +17,36 @@ if (!empty($_POST) && !empty($_FILES)) {
     $filesCount = count($files['name']);
 
     $comment = filter_input(INPUT_POST, 'comment', FILTER_SANITIZE_STRING);
-
-    for ($i = 0;$i<$filesCount;$i++){
+    $namesMedias = array();
+    $typesMedias = array();
+    $tmpsMedias = array();
+    for ($i = 0; $i < $filesCount; $i++) {
         $errorCode = $files['error'][$i];
         $fileName = $files['name'][$i];
         $fileType = $files['type'][$i];
         $fileTmp = $files['tmp_name'][$i];
 
-        $hasActionSuccedeed = App::insertMoveFile($errorCode,$fileName,$fileType,$fileTmp,$comment);
-
-        if ($hasActionSuccedeed != null){
-            var_dump($hasActionSuccedeed);
-            return;
+        if ($errorCode == 0) {
+            array_push($namesMedias, $fileName);
+            array_push($typesMedias, $fileType);
+            array_push($tmpsMedias, $fileTmp);
+        } else {
+            return "Erreur lors de l'upload d'un fichier.";
         }
     }
+
+    $result = App::insertPost($comment, $namesMedias, $typesMedias);
+    if ($result) {
+        for ($i = 0; $i < count($tmpsMedias); $i++) {
+            $dest = "uploads/" . $namesMedias[$i];
+            move_uploaded_file($tmpsMedias[$i], $dest);
+        }
+        header('Location: index.php');
+        exit();
+    } else {
+        $message = "Erreur lors de l'insertion d'un post.";
+    }
+
 }
 ?>
 <html>
