@@ -8,33 +8,29 @@
 
 require_once 'php/inc.all.php';
 //Si les variables contiennent les données envoyées du formulaire, on va les traiter et les ajouter dans la BDD
-$errorMessage;
 
 if (!empty($_POST) && !empty($_FILES)) {
     var_dump($_POST, $_FILES); //debug
 
     //file vars
-    $file = $_FILES['image'];
-    $errorCode = $file['error'];
-    $fileName = $file['name'];
-    $fileType = $file['type'];
-    $fileTmp = $file['tmp_name'];
+    $files = $_FILES['images'];
+    $filesCount = count($files['name']);
 
     $comment = filter_input(INPUT_POST, 'comment', FILTER_SANITIZE_STRING);
 
-    if ($errorCode == 0) {
-        $result = App::insertPost($comment, $fileType, $fileName);
-        if ($result) {
-            $dest = "uploads/" . $fileName;
-            move_uploaded_file($fileTmp, $dest);
-            header('Location: index.php');
-        } else {
-            $errorMessage = "Erreur lors de l'insertion du post.";
-        }
-    } else {
-        $errorMessage = "Erreur lors de l'upload du fichier.";
-    }
+    for ($i = 0;$i<$filesCount;$i++){
+        $errorCode = $files['error'][$i];
+        $fileName = $files['name'][$i];
+        $fileType = $files['type'][$i];
+        $fileTmp = $files['tmp_name'][$i];
 
+        $hasActionSuccedeed = App::insertMoveFile($errorCode,$fileName,$fileType,$fileTmp,$comment);
+
+        if ($hasActionSuccedeed != null){
+            var_dump($hasActionSuccedeed);
+            return;
+        }
+    }
 }
 ?>
 <html>
@@ -60,7 +56,7 @@ if (!empty($_POST) && !empty($_FILES)) {
         <textarea name="comment" id="comment" cols="30" rows="5" required></textarea>
         <br>
         <label for="image">Image</label>
-        <input type="file" name="image" id="image" required>
+        <input type="file" name="images[]" id="image" required multiple accept="image/*">
         <br>
         <input type="submit" value="Envoyer">
     </form>
