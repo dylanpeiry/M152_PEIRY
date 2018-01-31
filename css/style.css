@@ -1,0 +1,11 @@
+.profile_picture {
+    width: 100px;
+    height: 100px;
+}
+.active {
+    font-weight: bold;
+}
+.post_picture{
+    width: 250px;
+    height: 250px;
+}
