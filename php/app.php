@@ -32,17 +32,51 @@ class App
         }
     }
 
-    public static function getPosts()
-    {
-        $posts = [];
-        $sql = "SELECT idMedia,nameMedia,typeMedia,medias.idPost,comment,datePost FROM medias,posts WHERE medias.idPost = posts.idPost";
+    public static function getPosts(){
+        $posts = array();
+        $sql = "SELECT idPost FROM posts";
         try {
             $db = EDatabase::prepare($sql, array(PDO::ATTR_CURSOR, PDO::CURSOR_SCROLL));
             $db->execute();
             while ($row = $db->fetch(PDO::FETCH_ASSOC, PDO::FETCH_ORI_NEXT)) {
-                array_push($posts, array($row['idMedia'], $row['nameMedia'], $row['typeMedia'], $row['idPost'], $row['comment'], $row['datePost']));
+                $t = self::getMediasByPost($row['idPost']);
+                $posts[$row['idPost']] = $t;
             }
             return $posts;
+        } catch (PDOException $e) {
+            return false;
+        }
+    }
+
+    private static function getPost($postId)
+    {
+        $post = array();
+        $sql = "SELECT * FROM posts WHERE idPost = :id";
+        try {
+            $db = EDatabase::prepare($sql, array(PDO::ATTR_CURSOR, PDO::CURSOR_SCROLL));
+            $db->execute(array(':id' => $postId));
+            while ($row = $db->fetch(PDO::FETCH_ASSOC, PDO::FETCH_ORI_NEXT)) {
+                array_push($post, array($row['idPost'], $row['comment'], $row['datePost']));
+            }
+            return $post;
+        } catch (PDOException $e) {
+            return false;
+        }
+    }
+
+    private static function getMediasByPost($postId)
+    {
+        $comment = self::getPost($postId)[0][1];
+        $medias = [];
+        $sql = "SELECT idMedia,nameMedia,typeMedia FROM medias WHERE idPost = :id";
+        try {
+            $db = EDatabase::prepare($sql, array(PDO::ATTR_CURSOR, PDO::CURSOR_SCROLL));
+            $db->execute(array(':id' => $postId));
+            while ($row = $db->fetch(PDO::FETCH_ASSOC, PDO::FETCH_ORI_NEXT)) {
+                array_push($medias, array($row['idMedia'], $row['nameMedia'], $row['typeMedia']));
+            }
+            $data = array($comment => $medias);
+            return $data;
         } catch (PDOException $e) {
             return false;
         }
