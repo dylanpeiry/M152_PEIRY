@@ -50,53 +50,59 @@ $posts = App::getPosts();
 </div>
 <div class="container posts">
     <?php
-    foreach ($posts as $id => $medias) {
-        $comment = key($medias);
-        $htmlID = "post$id";
-        $medias = array_values($medias)[0];
-        ?>
-        <p><?= $comment ?></p>
-        <div id="<?= $htmlID ?>" class="carousel slide" data-ride="carousel" data-interval="false">
-            <ol class="carousel-indicators">
-                <li data-target="#<?= $htmlID ?>" data-slide-to="0" class="active"></li>
-                <li data-target="#<?= $htmlID ?>" data-slide-to="1"></li>
-                <li data-target="#<?= $htmlID ?>" data-slide-to="2"></li>
-            </ol>
-            <div class="carousel-inner">
+    foreach ($posts
+
+    as $id => $medias) {
+    $comment = key($medias);
+    $htmlID = "post$id";
+    $medias = array_values($medias)[0];
+    ?>
+    <p><?= $comment ?></p>
+    <div id="<?= $htmlID ?>" class="carousel slide" data-ride="carousel" data-interval="false">
+        <ol class="carousel-indicators">
+            <li data-target="#<?= $htmlID ?>" data-slide-to="0" class="active"></li>
+            <li data-target="#<?= $htmlID ?>" data-slide-to="1"></li>
+            <li data-target="#<?= $htmlID ?>" data-slide-to="2"></li>
+        </ol>
+        <div class="carousel-inner">
+            <?php
+            foreach ($medias
+
+            as $index => $media) {
+            $nameMedia = $media[1];
+            $type = $media[2];
+            ?>
+            <div class="carousel-item <?php if ($index == 0) echo 'active'; ?>">
                 <?php
-                foreach ($medias as $index => $media) {
-                    $nameMedia = $media[1];
-                    $type = $media[2];
-                    ?>
-                <div class="carousel-item <?php if ($index == 0) echo 'active'; ?>">
-                    <?php
-                    if (strpos($type, "video") != -1) {
-                        ?>
-                        <video width="320" height="240" controls>
-                            <source src="uploads/<?= $nameMedia ?>" type="<?= $type ?>">
-                        </video>
-                        <?php
-                    } else {
-                        ?>
-                        <img class="d-block w-100" src="uploads/<?= $nameMedia ?>" alt="First slide">
-                        </div>
-                        <?php
-                    }
-                }
+                if (strpos($type, "video") != false) {
                 ?>
+                <video width="320" height="240" controls>
+                    <source src="uploads/<?=$nameMedia?>" type="<?=$type?>">
+                </video>
             </div>
-            <a class="carousel-control-prev" href="#<?= $htmlID ?>" role="button" data-slide="prev">
-                <span class="carousel-control-prev-icon" aria-hidden="true"></span>
-                <span class="sr-only">Previous</span>
-            </a>
-            <a class="carousel-control-next" href="#<?= $htmlID ?>" role="button" data-slide="next">
-                <span class="carousel-control-next-icon" aria-hidden="true"></span>
-                <span class="sr-only">Next</span>
-            </a>
+            <?php
+            } else {
+            ?>
+            <img class="d-block w-100" src="uploads/<?= $nameMedia ?>" alt="First slide">
         </div>
         <?php
-    }
-    ?>
+        }
+        }
+        ?>
+
+    </div>
+    <a class="carousel-control-prev" href="#<?= $htmlID ?>" role="button" data-slide="prev">
+        <span class="carousel-control-prev-icon" aria-hidden="true"></span>
+        <span class="sr-only">Previous</span>
+    </a>
+    <a class="carousel-control-next" href="#<?= $htmlID ?>" role="button" data-slide="next">
+        <span class="carousel-control-next-icon" aria-hidden="true"></span>
+        <span class="sr-only">Next</span>
+    </a>
+</div>
+<?php
+}
+?>
 </div>
 </body>
 </html>
