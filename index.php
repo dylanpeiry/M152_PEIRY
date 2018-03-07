@@ -56,53 +56,80 @@ $posts = App::getPosts();
     $comment = key($medias);
     $htmlID = "post$id";
     $medias = array_values($medias)[0];
+    $count = count($medias);
     ?>
-    <p><?= $comment ?></p>
-    <div id="<?= $htmlID ?>" class="carousel slide" data-ride="carousel" data-interval="false">
-        <ol class="carousel-indicators">
-            <li data-target="#<?= $htmlID ?>" data-slide-to="0" class="active"></li>
-            <li data-target="#<?= $htmlID ?>" data-slide-to="1"></li>
-            <li data-target="#<?= $htmlID ?>" data-slide-to="2"></li>
-        </ol>
-        <div class="carousel-inner">
-            <?php
-            foreach ($medias
-
-            as $index => $media) {
-            $nameMedia = $media[1];
-            $type = $media[2];
-            ?>
-            <div class="carousel-item <?php if ($index == 0) echo 'active'; ?>">
-                <?php
-                if (strpos($type, "video") != false) {
+    <div class="row">
+        <div class="card mb-3">
+            <div id="<?= $htmlID ?>" class="carousel slide" data-ride="carousel" data-interval="false">
+                <?php if ($count > 1) { ?>
+                    <ol class="carousel-indicators">
+                        <?php
+                        for ($i = 0; $i < $count; $i++) {
+                            ?>
+                            <li data-target="#<?= $htmlID ?>" data-slide-to="<?= $count ?>"
+                                class="<?php if ($i == 0) echo "active"; ?>"></li>
+                            <?php
+                        }
+                        ?>
+                    </ol>
+                    <?php
+                }
                 ?>
-                <video width="320" height="240" controls>
-                    <source src="uploads/<?=$nameMedia?>" type="<?=$type?>">
-                </video>
-            </div>
+                <div class="carousel-inner">
+                    <?php
+                    foreach ($medias
+
+                    as $index => $media) {
+                    $nameMedia = $media[1];
+                    $type = $media[2];
+                    ?>
+                    <div class="carousel-item <?php if ($index == 0) echo 'active'; ?>">
+                        <?php
+                        if (strpos($type, "video") !== false) {
+                            ?>
+                            <video width="320" height="240" controls <?php if ($index == 0) echo 'autoplay'; ?>>
+                                <source src="uploads/<?= $nameMedia ?>" type="<?= $type ?>">
+                            </video>
+                            <?php
+                        }else if (strpos($type, "audio") !== false) {
+                        ?>
+                        <audio controls>
+                            <source src="uploads/<?= $nameMedia ?>" type="<?= $type ?>">
+                        </audio>
+                    </div>
+                    <?php
+                    } else {
+                    ?>
+                    <img class="d-block w-100 post_picture" src="uploads/<?= $nameMedia ?>" alt="First slide">
+                </div>
             <?php
-            } else {
+            }
+            }
             ?>
-            <img class="d-block w-100" src="uploads/<?= $nameMedia ?>" alt="First slide">
+            </div>
+        </div>
+        <div class="card-block">
+            <h4 class="card-title"><?= $comment ?></h4>
+            <a href="#" class="btn btn-outline-primary">Go here</a>
         </div>
         <?php
-        }
+        if ($count > 1) {
+            ?>
+            <a class="carousel-control-prev" href="#<?= $htmlID ?>" role="button" data-slide="prev">
+                <span class="carousel-control-prev-icon" aria-hidden="true"></span>
+                <span class="sr-only">Previous</span>
+            </a>
+            <a class="carousel-control-next" href="#<?= $htmlID ?>" role="button" data-slide="next">
+                <span class="carousel-control-next-icon" aria-hidden="true"></span>
+                <span class="sr-only">Next</span>
+            </a>
+            <?php
         }
         ?>
-
     </div>
-    <a class="carousel-control-prev" href="#<?= $htmlID ?>" role="button" data-slide="prev">
-        <span class="carousel-control-prev-icon" aria-hidden="true"></span>
-        <span class="sr-only">Previous</span>
-    </a>
-    <a class="carousel-control-next" href="#<?= $htmlID ?>" role="button" data-slide="next">
-        <span class="carousel-control-next-icon" aria-hidden="true"></span>
-        <span class="sr-only">Next</span>
-    </a>
 </div>
 <?php
 }
 ?>
-</div>
 </body>
 </html>

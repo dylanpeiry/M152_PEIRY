@@ -10,7 +10,6 @@ require_once 'php/inc.all.php';
 //Si les variables contiennent les données envoyées du formulaire, on va les traiter et les ajouter dans la BDD
 $message;
 if (!empty($_POST) && !empty($_FILES)) {
-    var_dump($_POST, $_FILES); //debug
 
     //file vars
     $files = array();
@@ -18,6 +17,8 @@ if (!empty($_POST) && !empty($_FILES)) {
         $files = $_FILES['videos'];
     } else if ($_POST['new_image']) {
         $files = $_FILES['images'];
+    }else if ($_POST['new_audio']) {
+        $files = $_FILES['audios'];
     }
     $filesCount = count($files['name']);
 
@@ -27,7 +28,7 @@ if (!empty($_POST) && !empty($_FILES)) {
     $tmpsMedias = array();
     for ($i = 0; $i < $filesCount; $i++) {
         $errorCode = $files['error'][$i];
-        $fileName = $files['name'][$i];
+        $fileName = uniqid("file_");
         $fileType = $files['type'][$i];
         $fileTmp = $files['tmp_name'][$i];
 
@@ -44,7 +45,9 @@ if (!empty($_POST) && !empty($_FILES)) {
     if ($result) {
         for ($i = 0; $i < count($tmpsMedias); $i++) {
             $dest = "uploads/" . $namesMedias[$i];
-            move_uploaded_file($tmpsMedias[$i], $dest);
+            if (!move_uploaded_file($tmpsMedias[$i], $dest)){
+                $message = "Erreur lors de l'upload d'un fichier.";
+            }
         }
         header('Location: index.php');
         exit();
@@ -94,7 +97,7 @@ if (!empty($_POST) && !empty($_FILES)) {
         <form action="post.php" method="POST" enctype="multipart/form-data" class="post_form">
             <div class="input-group mb-3">
                 <div class="input-group-prepend">
-                    <input class="btn btn-outline-secondary" type="submit" name="new_image" value="Poster les images">
+                    <input class="btn btn-outline-primary" type="submit" name="new_image" value="Poster les images">
                 </div>
                 <div class="custom-file">
                     <input type="file" class="custom-file-input" id="image" name="images[]" required multiple
@@ -115,12 +118,33 @@ if (!empty($_POST) && !empty($_FILES)) {
         <form action="post.php" method="POST" enctype="multipart/form-data" class="post_form">
             <div class="input-group mb-3">
                 <div class="input-group-prepend">
-                    <input class="btn btn-outline-secondary" type="submit" name="new_video" value="Poster les vidéos">
+                    <input class="btn btn-outline-primary" type="submit" name="new_video" value="Poster les vidéos">
                 </div>
                 <div class="custom-file">
                     <input type="file" class="custom-file-input" id="video" name="videos[]" required multiple
                            accept="video/*">
                     <label class="custom-file-label" for="video">Sélectionner des vidéos</label>
+                </div>
+            </div>
+            <div class="input-group">
+                <div class="input-group-prepend">
+                    <span class="input-group-text">Commentaire</span>
+                </div>
+                <textarea class="form-control" name="comment" id="comment" cols="30" rows="3" required></textarea>
+            </div>
+        </form>
+    </fieldset>
+    <fieldset>
+        <legend>Poster des audios</legend>
+        <form action="post.php" method="POST" enctype="multipart/form-data" class="post_form">
+            <div class="input-group mb-3">
+                <div class="input-group-prepend">
+                    <input class="btn btn-outline-primary" type="submit" name="new_audio" value="Poster les audios">
+                </div>
+                <div class="custom-file">
+                    <input type="file" class="custom-file-input" id="audio" name="audios[]" required multiple
+                           accept="audio/*">
+                    <label class="custom-file-label" for="video">Sélectionner des audios</label>
                 </div>
             </div>
             <div class="input-group">
