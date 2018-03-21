@@ -86,47 +86,49 @@ $posts = App::getPosts();
                     <div class="carousel-item <?php if ($index == 0) echo 'active'; ?>">
                         <?php
                         if (strpos($type, "video") !== false) {
-                            ?>
-                            <video width="320" height="240" controls <?php if ($index == 0) echo 'autoplay'; ?>>
-                                <source src="uploads/<?= $nameMedia ?>" type="<?= $type ?>">
-                            </video>
-                            <?php
-                        }else if (strpos($type, "audio") !== false) {
                         ?>
-                        <audio controls>
+                        <video width="320" height="240" controls <?php if ($index == 0) echo 'autoplay'; ?>>
                             <source src="uploads/<?= $nameMedia ?>" type="<?= $type ?>">
-                        </audio>
+                        </video>
                     </div>
                     <?php
-                    } else {
+                    }else if (strpos($type, "audio") !== false) {
                     ?>
-                    <img class="d-block w-100 post_picture" src="uploads/<?= $nameMedia ?>" alt="First slide">
+                    <audio controls>
+                        <source src="uploads/<?= $nameMedia ?>" type="<?= $type ?>">
+                    </audio>
                 </div>
-            <?php
-            }
-            }
-            ?>
+                <?php
+                } else {
+                ?>
+                <img class="d-block w-100 post_picture" src="uploads/<?= $nameMedia ?>" alt="First slide">
             </div>
-        </div>
-        <div class="card-block">
-            <h4 class="card-title"><?= $comment ?></h4>
-            <a href="#" class="btn btn-outline-primary">Go here</a>
-        </div>
-        <?php
-        if ($count > 1) {
-            ?>
-            <a class="carousel-control-prev" href="#<?= $htmlID ?>" role="button" data-slide="prev">
-                <span class="carousel-control-prev-icon" aria-hidden="true"></span>
-                <span class="sr-only">Previous</span>
-            </a>
-            <a class="carousel-control-next" href="#<?= $htmlID ?>" role="button" data-slide="next">
-                <span class="carousel-control-next-icon" aria-hidden="true"></span>
-                <span class="sr-only">Next</span>
-            </a>
             <?php
-        }
-        ?>
+            }
+            }
+            ?>
+        </div>
     </div>
+    <div class="card-block text-center">
+        <h4 class="card-title"><?= $comment ?></h4>
+        <a href="#" class="btn btn-danger">Supprimer</a>
+        <a href="#" class="btn btn-warning">Modifier</a>
+    </div>
+    <?php
+    if ($count > 1) {
+        ?>
+        <a class="carousel-control-prev" href="#<?= $htmlID ?>" role="button" data-slide="prev">
+            <span class="carousel-control-prev-icon" aria-hidden="true"></span>
+            <span class="sr-only">Previous</span>
+        </a>
+        <a class="carousel-control-next" href="#<?= $htmlID ?>" role="button" data-slide="next">
+            <span class="carousel-control-next-icon" aria-hidden="true"></span>
+            <span class="sr-only">Next</span>
+        </a>
+        <?php
+    }
+    ?>
+</div>
 </div>
 <?php
 }
