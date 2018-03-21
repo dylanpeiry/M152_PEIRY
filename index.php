@@ -20,6 +20,8 @@ $posts = App::getPosts();
     <!-- CSS & Scripts -->
     <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0/css/bootstrap.min.css"
           integrity="sha384-Gn5384xqQ1aoWXA+058RXPxPg6fy4IWvTNh0E263XmFcJlSAwiGgFAW/dAiS6JXm" crossorigin="anonymous">
+    <link rel="stylesheet" href="https://use.fontawesome.com/releases/v5.0.8/css/all.css"
+          integrity="sha384-3AB7yXWz4OeoZcPbieVW64vVXEwADiYyAEhwilzWsLw+9FgqpyjjStpPnpBO8o8S" crossorigin="anonymous">
     <link rel="stylesheet" href="css/style.css">
 
 
@@ -32,6 +34,7 @@ $posts = App::getPosts();
     <script src="https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0/js/bootstrap.min.js"
             integrity="sha384-JZR6Spejh4U02d8jOt6vLEHfe/JQGiRRSQQxSfFWpi1MquVdAyjUar5+76PVCmYl"
             crossorigin="anonymous"></script>
+    <script src="js/app.js" type="text/javascript"></script>
 </head>
 <body>
 <!-- Navigation -->
@@ -111,8 +114,10 @@ $posts = App::getPosts();
     </div>
     <div class="card-block text-center">
         <h4 class="card-title"><?= $comment ?></h4>
-        <a href="#" class="btn btn-danger">Supprimer</a>
-        <a href="#" class="btn btn-warning">Modifier</a>
+        <button type="button" class="btn btn-danger delete" id="delete_post#<?= $id ?>"><i class="fa fa-trash"></i>
+        </button>
+        <button type="button" class="btn btn-warning edit" id="edit_post#<?= $id ?>"><i
+                    class="fa fa-pencil-alt "></i></button>
     </div>
     <?php
     if ($count > 1) {
@@ -133,5 +138,65 @@ $posts = App::getPosts();
 <?php
 }
 ?>
+
+<div class="modal fade" id="deleteConfirmation" tabindex="-1" role="dialog" aria-labelledby="exampleModalLabel"
+     aria-hidden="true">
+    <div class="modal-dialog" role="document">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title" id="exampleModalLabel">Confirmation de suppression</h5>
+                <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                    <span aria-hidden="true">&times;</span>
+                </button>
+            </div>
+            <div class="modal-body">
+                <div class="alert alert-warning" role="alert" id="postAlert">
+                    Êtes-vous sur de vouloir supprimer ce post "<a id="postDescription"></a>" ainsi que ses images ?
+                </div>
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-secondary" data-dismiss="modal">Fermer</button>
+                <button type="button" class="btn btn-danger deletepost">Supprimer</button>
+            </div>
+        </div>
+    </div>
+</div>
+<div class="modal fade" id="edit" tabindex="-1" role="dialog" aria-labelledby="exampleModalLabel"
+     aria-hidden="true">
+    <div class="modal-dialog" role="document">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title" id="exampleModalLabel">Modification d'un post</h5>
+                <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                    <span aria-hidden="true">&times;</span>
+                </button>
+            </div>
+            <div class="modal-body">
+                <label for="#post_content">Description du post</label>
+                <input id="post_content" class="form-control">
+                <label for="#post_medias">Médias</label>
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-secondary" data-dismiss="modal">Fermer</button>
+                <button type="button" class="btn btn-warning editpost">Modifier</button>
+            </div>
+        </div>
+    </div>
+</div>
 </body>
+<script>
+    $('.delete').click(function () {
+        var text = $(this).siblings()[0].textContent;
+        MessageBox.confirmation(text);
+
+    })
+    $('.deletepost').click(function () {
+        MessageBox.accepted(51);
+    });
+    $('.edit').click(function () {
+        var text = $(this).siblings()[0].textContent;
+        $('#post_content').attr('placeholder', text);
+        $('#edit').modal('show');
+    })
+</script>
 </html>

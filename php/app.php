@@ -32,7 +32,8 @@ class App
         }
     }
 
-    public static function getPosts(){
+    public static function getPosts()
+    {
         $posts = array();
         $sql = "SELECT idPost FROM posts";
         try {
@@ -80,5 +81,16 @@ class App
         } catch (PDOException $e) {
             return false;
         }
+    }
+
+    public static function deletePost($postId){
+        $sql = "DELETE * FROM medias, posts WHERE posts.idPost = medias.idPost AND posts.idPost = :id";
+        try {
+            $db = EDatabase::prepare($sql, array(PDO::ATTR_CURSOR, PDO::CURSOR_SCROLL));
+            $db->execute(array(':id' => $postId));
+        } catch (PDOException $e){
+            return false;
+        }
+
     }
 }
