@@ -4,7 +4,7 @@ var MessageBox = {
         $('#deleteConfirmation').modal('show');
     },
     accepted: function (idPost) {
-        $.get("../php/request.php", function (data) {
+        $.get("./php/request.php?action=delete&postid=51", function (data) {
             console.log(data);
         })
         $('#deleteConfirmation').modal('hide');
