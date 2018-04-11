@@ -132,6 +132,7 @@ $posts = App::getPosts();
     }
     ?>
 </div>
+</div>
 <?php
 }
 ?>
