@@ -1,17 +1,23 @@
 <?php
+require_once 'app.php';
+
 header('Content-Type: application/json');
 
 if (isset($_GET['action'])) {
     $action = filter_input(INPUT_GET, 'action', FILTER_SANITIZE_STRING);
     if (isset($_GET['postid'])) {
         $id = filter_input(INPUT_GET, 'postid', FILTER_SANITIZE_NUMBER_INT);
-        App::deletePost($id);
-        return '{"Message" : "Suppression ok." }';
+        if (App::deletePost($id)) {
+
+            echo '{"Code" : 0, "Message" : "Suppression ok." }';
+        } else {
+            echo '{"Code" : 3, "Message" : "Suppression annulée." }';
+        }
     } else {
-        echo '{"Message" : "Aucun id reçu en paramètre."}';
+        echo '{"Code" : 1, "Message" : "Aucun id reçu en paramètre."}';
     }
 } else {
-    echo '{"Message" : "Aucune action reçue en paramètre." }';
+    echo '{"Code" : 2 ,"Message" : "Aucune action reçue en paramètre." }';
 }
 
 // Nécessaire lorsqu'on retourne du json

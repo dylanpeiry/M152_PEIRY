@@ -1,10 +1,11 @@
 var MessageBox = {
-    confirmation: function (text) {
-        $("#postDescription").text(text);
+    confirmation: function (text, id) {
+        $(".postDescription").text(text);
+        $(".postDescription").attr('id',id);
         $('#deleteConfirmation').modal('show');
     },
     accepted: function (idPost) {
-        $.get("./php/request.php?action=delete&postid=51", function (data) {
+        $.get("./php/request.php?action=delete&postid=" + idPost, function (data) {
             console.log(data);
         })
         $('#deleteConfirmation').modal('hide');

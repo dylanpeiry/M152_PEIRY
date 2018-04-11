@@ -5,6 +5,7 @@
  * Date: 24.01.2018
  * Time: 14:21
  */
+require_once 'db/database.php';
 
 class App
 {
@@ -83,14 +84,30 @@ class App
         }
     }
 
-    public static function deletePost($postId){
-        $sql = "DELETE * FROM medias, posts WHERE posts.idPost = medias.idPost AND posts.idPost = :id";
+    public static function deletePost($postId)
+    {
+        if (self::deleteMediasOfPost($postId)) {
+            $sql = "DELETE FROM posts WHERE idPost = :id";
+            try {
+                $db = EDatabase::prepare($sql, array(PDO::ATTR_CURSOR, PDO::CURSOR_SCROLL));
+                $db->execute(array(':id' => $postId));
+                return true;
+            } catch (PDOException $e) {
+                return false;
+            }
+        } else
+            return false;
+    }
+
+    private static function deleteMediasOfPost($postId)
+    {
+        $sql = 'DELETE FROM medias WHERE medias.idPost = :id';
         try {
             $db = EDatabase::prepare($sql, array(PDO::ATTR_CURSOR, PDO::CURSOR_SCROLL));
             $db->execute(array(':id' => $postId));
-        } catch (PDOException $e){
+            return true;
+        } catch (PDOException $e) {
             return false;
         }
-
     }
 }

@@ -2,7 +2,7 @@
 /**
  * @author 	dominique.aigroz@edu.ge.ch
  */
-require_once 'php/config/conparam.php';
+require_once __DIR__ . '/../config/conparam.php';
 
 /**
  * @brief	Helper class encapsulating

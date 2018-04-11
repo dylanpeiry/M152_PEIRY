@@ -10,15 +10,20 @@ require_once 'php/inc.all.php';
 //Si les variables contiennent les données envoyées du formulaire, on va les traiter et les ajouter dans la BDD
 $message;
 if (!empty($_POST) && !empty($_FILES)) {
-
+    $allowedType;
+    $isTypeInvalid;
+    $message;
     //file vars
     $files = array();
-    if ($_POST['new_video']) {
+    if (isset($_POST['new_video'])) {
         $files = $_FILES['videos'];
-    } else if ($_POST['new_image']) {
+        $allowedType = "video/";
+    } else if (isset($_POST['new_image'])) {
         $files = $_FILES['images'];
-    }else if ($_POST['new_audio']) {
+        $allowedType = "image/";
+    } else if (isset($_POST['new_audio'])) {
         $files = $_FILES['audios'];
+        $allowedType = "audio/";
     }
     $filesCount = count($files['name']);
 
@@ -31,28 +36,34 @@ if (!empty($_POST) && !empty($_FILES)) {
         $fileName = uniqid("file_");
         $fileType = $files['type'][$i];
         $fileTmp = $files['tmp_name'][$i];
-
-        if ($errorCode == 0) {
-            array_push($namesMedias, $fileName);
-            array_push($typesMedias, $fileType);
-            array_push($tmpsMedias, $fileTmp);
-        } else {
-            return "Erreur lors de l'upload d'un fichier.";
-        }
-    }
-
-    $result = App::insertPost($comment, $namesMedias, $typesMedias);
-    if ($result) {
-        for ($i = 0; $i < count($tmpsMedias); $i++) {
-            $dest = "uploads/" . $namesMedias[$i];
-            if (!move_uploaded_file($tmpsMedias[$i], $dest)){
+        if (strpos($fileType, $allowedType) !== false) {
+            if ($errorCode == 0) {
+                array_push($namesMedias, $fileName);
+                array_push($typesMedias, $fileType);
+                array_push($tmpsMedias, $fileTmp);
+            } else {
                 $message = "Erreur lors de l'upload d'un fichier.";
             }
+        } else {
+            $isTypeInvalid = true;
         }
-        header('Location: index.php');
-        exit();
-    } else {
-        $message = "Erreur lors de l'insertion d'un post.";
+    }
+    if (!$isTypeInvalid) {
+        $result = App::insertPost($comment, $namesMedias, $typesMedias);
+        if ($result) {
+            for ($i = 0; $i < count($tmpsMedias); $i++) {
+                $dest = "uploads/" . $namesMedias[$i];
+                if (!move_uploaded_file($tmpsMedias[$i], $dest)) {
+                    $message = "Erreur lors de l'upload d'un fichier.";
+                }
+            }
+            header('Location: index.php');
+            exit();
+        } else {
+            $message = "Erreur lors de l'insertion d'un post.";
+        }
+    }else{
+        $message = "Les types des fichiers doivent être les mêmes.(Video,Image ou Audio)";
     }
 
 }
@@ -68,7 +79,8 @@ if (!empty($_POST) && !empty($_FILES)) {
     <!-- CSS & Scripts -->
     <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0/css/bootstrap.min.css"
           integrity="sha384-Gn5384xqQ1aoWXA+058RXPxPg6fy4IWvTNh0E263XmFcJlSAwiGgFAW/dAiS6JXm" crossorigin="anonymous">
-    <link rel="stylesheet" href="https://use.fontawesome.com/releases/v5.0.8/css/all.css" integrity="sha384-3AB7yXWz4OeoZcPbieVW64vVXEwADiYyAEhwilzWsLw+9FgqpyjjStpPnpBO8o8S" crossorigin="anonymous">
+    <link rel="stylesheet" href="https://use.fontawesome.com/releases/v5.0.8/css/all.css"
+          integrity="sha384-3AB7yXWz4OeoZcPbieVW64vVXEwADiYyAEhwilzWsLw+9FgqpyjjStpPnpBO8o8S" crossorigin="anonymous">
     <link rel="stylesheet" href="css/style.css">
 
 
@@ -90,6 +102,15 @@ if (!empty($_POST) && !empty($_FILES)) {
         <a class="nav-link active" href="#">Posts</a>
     </li>
 </ul>
+<?php
+if (isset($message)) {
+    ?>
+    <div class="alert alert-danger" role="alert">
+        <strong>ERREUR</strong> <?=$message?>
+    </div>
+    <?php
+}
+?>
 <div class="container">
     <fieldset>
         <legend>Poster des images</legend>

@@ -132,7 +132,6 @@ $posts = App::getPosts();
     }
     ?>
 </div>
-</div>
 <?php
 }
 ?>
@@ -149,7 +148,7 @@ $posts = App::getPosts();
             </div>
             <div class="modal-body">
                 <div class="alert alert-warning" role="alert" id="postAlert">
-                    Êtes-vous sur de vouloir supprimer ce post "<a id="postDescription"></a>" ainsi que ses images ?
+                    Êtes-vous sur de vouloir supprimer ce post "<a class="postDescription"></a>" ainsi que ses images ?
                 </div>
             </div>
             <div class="modal-footer">
@@ -185,11 +184,13 @@ $posts = App::getPosts();
 <script>
     $('.delete').click(function () {
         var text = $(this).siblings()[0].textContent;
-        MessageBox.confirmation(text);
+        var id = $(this).parent().prev()[0].id.substr(4);
+        MessageBox.confirmation(text, id);
 
     })
     $('.deletepost').click(function () {
-        MessageBox.accepted(51);
+        var id = $(this).parent().siblings('.modal-body').find(".postDescription")[0].id;
+        MessageBox.accepted(id);
     });
     $('.edit').click(function () {
         var text = $(this).siblings()[0].textContent;
